@@ -1,0 +1,6 @@
+services:
+  key-value-store-server:
+    build: ./server
+    container_name: kvs_server
+    ports:
+      - "5544:5544"

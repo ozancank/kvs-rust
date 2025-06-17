@@ -17,12 +17,15 @@ pub async fn handle_command() -> tokio::io::Result<()> {
 
     let message = message + "\n";
 
-    let mut stream = TcpStream::connect("127.0.0.1:5544").await?;
+    let mut stream = match TcpStream::connect("[::1]:5544").await {
+        Ok(s) => s,
+        Err(_) => TcpStream::connect("127.0.0.1:5544").await?,
+    };
     stream.write_all(message.as_bytes()).await?;
 
     let mut buffer = [0; 1024];
-    let bytes_read = stream.read(&mut buffer).await?;
 
+    let bytes_read = stream.read(&mut buffer).await?;
     if bytes_read == 0 {
         eprintln!("Connection closed by the server");
         return Ok(());
